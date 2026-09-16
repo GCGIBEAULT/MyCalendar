@@ -107,13 +107,13 @@ h1 {
 }
 
 .today {
-    background: #fff9e8;
-    border: 2px solid #d39b36;
-    box-shadow: 0 3px 10px rgba(150,110,35,0.18);
+    background: #fff3c4;
+    border: 2px solid #e1c36a;
+    box-shadow: 0 3px 10px rgba(150,110,35,0.12);
 }
 
 .today .day-number {
-    color: #9a6814;
+    color: #6b5520;
     font-weight: 700;
 }
 
