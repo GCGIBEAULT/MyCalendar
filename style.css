@@ -120,3 +120,58 @@ h1 {
 .empty {
     min-height: 105px;
 }
+/* Phones and tablets */
+@media (max-width: 700px) {
+
+    body {
+        padding: 10px 5px;
+    }
+
+    .calendar-header {
+        margin-bottom: 15px;
+    }
+
+    #monthYear {
+        font-size: 22px;
+    }
+
+    .calendar-header button {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+
+    .weekdays {
+        gap: 3px;
+        font-size: 11px;
+        letter-spacing: 0;
+        margin-bottom: 5px;
+    }
+
+    #calendar {
+        gap: 3px;
+    }
+
+    .day {
+        min-height: 70px;
+        padding: 5px 2px;
+        border-radius: 6px;
+    }
+
+    .day-number {
+        font-size: 15px;
+        margin-bottom: 4px;
+    }
+
+    .note {
+        margin-top: 3px;
+        padding: 3px 1px;
+        border-left: none;
+        font-size: 10px;
+        line-height: 1.15;
+        overflow-wrap: anywhere;
+    }
+
+    .empty {
+        min-height: 70px;
+    }
+}
