@@ -1,54 +1,57 @@
-const calendar = document.getElementById('calendar');
+document.addEventListener("DOMContentLoaded", () => {
+  const calendar = document.getElementById("calendar");
+  const monthYear = document.getElementById("monthYear");
+  const prevBtn = document.getElementById("prev");
+  const nextBtn = document.getElementById("next");
 
-const year = new Date().getFullYear();
-const months = [
-  "January","February","March","April","May","June",
-  "July","August","September","October","November","December"
-];
+  let currentDate = new Date();
 
-function buildCalendar() {
-  months.forEach((month, m) => {
-    const monthLabel = document.createElement('div');
-    monthLabel.className = 'month-label';
-    monthLabel.textContent = month;
-    calendar.appendChild(monthLabel);
+  function renderCalendar() {
+    calendar.innerHTML = "";
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
 
-    const daysOfWeek = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-    daysOfWeek.forEach(d => {
-      const dow = document.createElement('div');
-      dow.className = 'dow';
-      dow.textContent = d;
-      calendar.appendChild(dow);
+    monthYear.textContent = currentDate.toLocaleString("default", {
+      month: "long",
+      year: "numeric"
     });
 
-    const firstDay = new Date(year, m, 1).getDay();
-    const daysInMonth = new Date(year, m + 1, 0).getDate();
+    const firstDay = new Date(year, month, 1).getDay();
+    const lastDate = new Date(year, month + 1, 0).getDate();
 
     for (let i = 0; i < firstDay; i++) {
-      const blank = document.createElement('div');
-      blank.className = 'day blank';
-      calendar.appendChild(blank);
+      const emptyCell = document.createElement("div");
+      emptyCell.classList.add("empty");
+      calendar.appendChild(emptyCell);
     }
 
-    for (let day = 1; day <= daysInMonth; day++) {
-      const div = document.createElement('div');
-      div.className = 'day';
-      div.textContent = day;
+    for (let day = 1; day <= lastDate; day++) {
+      const dayCell = document.createElement("div");
+      dayCell.textContent = day;
+      dayCell.classList.add("day");
 
-      div.onclick = () => {
-        const note = prompt(`Note for ${month} ${day}, ${year}`);
-        if (note !== null) {
-          localStorage.setItem(`${year}-${m+1}-${day}`, note);
-        }
-      };
+      const today = new Date();
+      if (
+        day === today.getDate() &&
+        month === today.getMonth() &&
+        year === today.getFullYear()
+      ) {
+        dayCell.classList.add("today");
+      }
 
-      calendar.appendChild(div);
+      calendar.appendChild(dayCell);
     }
+  }
 
-    // TWO SPACES BETWEEN MONTHS
-    calendar.appendChild(document.createElement('br'));
-    calendar.appendChild(document.createElement('br'));
+  prevBtn.addEventListener("click", () => {
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    renderCalendar();
   });
-}
 
-buildCalendar();
+  nextBtn.addEventListener("click", () => {
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    renderCalendar();
+  });
+
+  renderCalendar();
+});
