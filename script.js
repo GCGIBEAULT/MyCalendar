@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let currentDate = new Date();
 
-  function renderCalendar() {
+  function buildCalendar() {
     calendar.innerHTML = "";
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
@@ -27,8 +27,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     for (let day = 1; day <= lastDate; day++) {
       const dayCell = document.createElement("div");
-      dayCell.textContent = day;
       dayCell.classList.add("day");
+      dayCell.textContent = day;
 
       const today = new Date();
       if (
@@ -39,19 +39,38 @@ document.addEventListener("DOMContentLoaded", () => {
         dayCell.classList.add("today");
       }
 
+      const savedNote = localStorage.getItem(`${year}-${month}-${day}`);
+      if (savedNote) {
+        const noteDot = document.createElement("div");
+        noteDot.classList.add("note-dot");
+        dayCell.appendChild(noteDot);
+      }
+
+      dayCell.addEventListener("click", () => {
+        const note = prompt("Enter note for this day:", savedNote || "");
+        if (note !== null) {
+          if (note.trim() === "") {
+            localStorage.removeItem(`${year}-${month}-${day}`);
+          } else {
+            localStorage.setItem(`${year}-${month}-${day}`, note);
+          }
+          buildCalendar();
+        }
+      });
+
       calendar.appendChild(dayCell);
     }
   }
 
   prevBtn.addEventListener("click", () => {
     currentDate.setMonth(currentDate.getMonth() - 1);
-    renderCalendar();
+    buildCalendar();
   });
 
   nextBtn.addEventListener("click", () => {
     currentDate.setMonth(currentDate.getMonth() + 1);
-    renderCalendar();
+    buildCalendar();
   });
 
-  renderCalendar();
+  buildCalendar();
 });
