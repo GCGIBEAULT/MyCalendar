@@ -44,6 +44,10 @@ function buildCalendar() {
 
       calendar.appendChild(div);
     }
+
+    // TWO SPACES BETWEEN MONTHS
+    calendar.appendChild(document.createElement('br'));
+    calendar.appendChild(document.createElement('br'));
   });
 }
 
