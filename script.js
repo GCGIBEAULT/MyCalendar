@@ -20,20 +20,35 @@ document.addEventListener("DOMContentLoaded", () => {
     const firstDay = new Date(year, month, 1).getDay();
     const lastDate = new Date(year, month + 1, 0).getDate();
 
+    // Empty spaces before the first day of the month
     for (let i = 0; i < firstDay; i++) {
       const emptyCell = document.createElement("div");
       emptyCell.classList.add("empty");
       calendar.appendChild(emptyCell);
     }
 
+    // Build each day
     for (let day = 1; day <= lastDate; day++) {
       const dayCell = document.createElement("div");
       dayCell.classList.add("day");
 
       const dayNumber = document.createElement("div");
+      dayNumber.classList.add("day-number");
       dayNumber.textContent = day;
       dayCell.appendChild(dayNumber);
 
+      // Highlight today's date
+      const today = new Date();
+
+      if (
+        day === today.getDate() &&
+        month === today.getMonth() &&
+        year === today.getFullYear()
+      ) {
+        dayCell.classList.add("today");
+      }
+
+      // Saved appointment/note
       const key = `${year}-${month}-${day}`;
       const savedNote = localStorage.getItem(key);
 
@@ -44,9 +59,14 @@ document.addEventListener("DOMContentLoaded", () => {
         dayCell.appendChild(noteText);
       }
 
+      // Click a date to add or edit an appointment
       dayCell.addEventListener("click", () => {
-        const oldNote = localStorage.getItem(key) || "";
-        const note = prompt("Enter event for this day:", oldNote);
+        const currentNote = localStorage.getItem(key) || "";
+
+        const note = prompt(
+          "Enter event for this day:",
+          currentNote
+        );
 
         if (note !== null) {
           if (note.trim() === "") {
@@ -54,6 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
           } else {
             localStorage.setItem(key, note.trim());
           }
+
           buildCalendar();
         }
       });
@@ -62,11 +83,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Previous month
   prevBtn.addEventListener("click", () => {
     currentDate.setMonth(currentDate.getMonth() - 1);
     buildCalendar();
   });
 
+  // Next month
   nextBtn.addEventListener("click", () => {
     currentDate.setMonth(currentDate.getMonth() + 1);
     buildCalendar();
