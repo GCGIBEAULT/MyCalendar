@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function buildCalendar() {
     calendar.innerHTML = "";
+
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
 
@@ -28,31 +29,30 @@ document.addEventListener("DOMContentLoaded", () => {
     for (let day = 1; day <= lastDate; day++) {
       const dayCell = document.createElement("div");
       dayCell.classList.add("day");
-      dayCell.textContent = day;
 
-      const today = new Date();
-      if (
-        day === today.getDate() &&
-        month === today.getMonth() &&
-        year === today.getFullYear()
-      ) {
-        dayCell.classList.add("today");
-      }
+      const dayNumber = document.createElement("div");
+      dayNumber.textContent = day;
+      dayCell.appendChild(dayNumber);
 
-      const savedNote = localStorage.getItem(`${year}-${month}-${day}`);
+      const key = `${year}-${month}-${day}`;
+      const savedNote = localStorage.getItem(key);
+
       if (savedNote) {
-        const noteDot = document.createElement("div");
-        noteDot.classList.add("note-dot");
-        dayCell.appendChild(noteDot);
+        const noteText = document.createElement("div");
+        noteText.classList.add("note");
+        noteText.textContent = savedNote;
+        dayCell.appendChild(noteText);
       }
 
       dayCell.addEventListener("click", () => {
-        const note = prompt("Enter note for this day:", savedNote || "");
+        const oldNote = localStorage.getItem(key) || "";
+        const note = prompt("Enter event for this day:", oldNote);
+
         if (note !== null) {
           if (note.trim() === "") {
-            localStorage.removeItem(`${year}-${month}-${day}`);
+            localStorage.removeItem(key);
           } else {
-            localStorage.setItem(`${year}-${month}-${day}`, note);
+            localStorage.setItem(key, note.trim());
           }
           buildCalendar();
         }
