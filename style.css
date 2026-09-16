@@ -1,15 +1,18 @@
 body {
     font-family: "Segoe UI", Arial, sans-serif;
-    background: #f5f6f8;
+    background: linear-gradient(135deg, #eef3f7, #f8f6f1);
     margin: 0;
-    padding: 30px;
-    color: #222;
+    padding: 35px;
+    color: #28323c;
 }
 
 h1 {
     text-align: center;
-    font-size: 32px;
-    margin-bottom: 25px;
+    font-size: 36px;
+    font-weight: 600;
+    margin: 0 0 28px;
+    color: #26384a;
+    letter-spacing: 0.5px;
 }
 
 .calendar-header {
@@ -17,21 +20,30 @@ h1 {
     align-items: center;
     justify-content: space-between;
     max-width: 1100px;
-    margin: 0 auto 20px;
+    margin: 0 auto 25px;
 }
 
 #monthYear {
-    font-size: 28px;
+    font-size: 30px;
+    font-weight: 600;
+    color: #31516d;
     margin: 0;
 }
 
 .calendar-header button {
-    background: white;
-    border: 1px solid #bbb;
-    border-radius: 8px;
-    padding: 10px 20px;
-    font-size: 16px;
+    background: #31516d;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 22px;
+    font-size: 15px;
+    font-weight: 600;
     cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+.calendar-header button:hover {
+    background: #243f57;
 }
 
 .weekdays {
@@ -39,47 +51,70 @@ h1 {
     grid-template-columns: repeat(7, 1fr);
     gap: 8px;
     max-width: 1100px;
-    margin: 0 auto 8px;
+    margin: 0 auto 10px;
     text-align: center;
-    font-weight: bold;
-    font-size: 16px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #657482;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 #calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
+    gap: 9px;
     max-width: 1100px;
     margin: 0 auto;
 }
 
 .day {
-    background: white;
+    background: rgba(255,255,255,0.95);
     min-height: 105px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    padding: 11px;
+    border: 1px solid #dce2e6;
+    border-radius: 12px;
     text-align: center;
     cursor: pointer;
     box-sizing: border-box;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .day:hover {
-    background: #f0f4f8;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.12);
+    border-color: #9cabb7;
+}
+
+.day-number {
+    font-size: 18px;
+    font-weight: 600;
+    color: #354554;
+    margin-bottom: 8px;
 }
 
 .note {
     margin-top: 8px;
-    padding: 5px;
-    background: #e7f0ff;
-    border-radius: 5px;
+    padding: 6px 5px;
+    background: #e4edf5;
+    color: #28445c;
+    border-left: 4px solid #527b9e;
+    border-radius: 6px;
     font-size: 14px;
-    font-weight: 500;
+    line-height: 1.3;
+    font-weight: 600;
 }
 
 .today {
-    border: 3px solid #2878d0;
-    background: #f4f8ff;
+    background: #fff9e8;
+    border: 2px solid #d39b36;
+    box-shadow: 0 3px 10px rgba(150,110,35,0.18);
+}
+
+.today .day-number {
+    color: #9a6814;
+    font-weight: 700;
 }
 
 .empty {
