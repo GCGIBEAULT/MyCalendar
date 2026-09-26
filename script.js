@@ -19,46 +19,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
   }
 
-  // Copy old laptop appointments into Supabase.
-  async function migrateOldAppointments() {
-    const oldAppointments = [];
-
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-
-      // Old calendar format was YEAR-ZEROBASEDMONTH-DAY
-      if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(key)) {
-        const text = localStorage.getItem(key);
-
-        if (!text || !text.trim()) continue;
-
-        const [year, oldMonth, day] = key.split("-").map(Number);
-
-        const eventDate =
-          `${year}-${String(oldMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-
-        oldAppointments.push({
-          event_date: eventDate,
-          event_text: text.trim()
-        });
-      }
-    }
-
-    if (oldAppointments.length === 0) return;
-
-    const { error } = await supabaseClient
-      .from("calendar_events")
-      .upsert(oldAppointments, {
-        onConflict: "event_date",
-        ignoreDuplicates: true
-      });
-
-    if (error) {
-      console.error("Migration error:", error);
-      alert("Your old appointments could not be copied.");
-    }
-  }
-
   async function loadEvents() {
     const { data, error } = await supabaseClient
       .from("calendar_events")
@@ -188,6 +148,5 @@ document.addEventListener("DOMContentLoaded", async () => {
     buildCalendar();
   });
 
-  await migrateOldAppointments();
   await loadEvents();
 });
