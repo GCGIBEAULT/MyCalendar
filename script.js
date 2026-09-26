@@ -1,3 +1,6 @@
+const SUPABASE_URL = "https://axgewhvvcrafpndvojjh.supabase.co";
+const SUPABASE_KEY = "sb_publishable_QTzdQqZXFeKvMZ2OZP24RA_9ocTNGa_";
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 document.addEventListener("DOMContentLoaded", () => {
   const calendar = document.getElementById("calendar");
   const monthYear = document.getElementById("monthYear");
