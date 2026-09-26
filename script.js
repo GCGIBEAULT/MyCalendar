@@ -1,10 +1,43 @@
-document.addEventListener("DOMContentLoaded", () => {
+const SUPABASE_URL = "https://axgewhvvcrafpndvojjh.supabase.co";
+const SUPABASE_KEY = "sb_publishable_QTzdQqZXFeKvMZ2OZP24RA_9ocTNGa_";
+
+document.addEventListener("DOMContentLoaded", async () => {
   const calendar = document.getElementById("calendar");
   const monthYear = document.getElementById("monthYear");
   const prevBtn = document.getElementById("prev");
   const nextBtn = document.getElementById("next");
 
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
   let currentDate = new Date();
+  let events = {};
+
+  function isoDate(year, month, day) {
+    return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  }
+
+  async function loadEvents() {
+    const { data, error } = await supabaseClient
+      .from("calendar_events")
+      .select("event_date,event_text");
+
+    if (error) {
+      console.error(error);
+      alert("Calendar could not connect to Supabase.");
+      return;
+    }
+
+    events = {};
+
+    data.forEach(row => {
+      events[row.event_date] = row.event_text;
+    });
+
+    buildCalendar();
+  }
 
   function buildCalendar() {
     calendar.innerHTML = "";
@@ -20,14 +53,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const firstDay = new Date(year, month, 1).getDay();
     const lastDate = new Date(year, month + 1, 0).getDate();
 
-    // Empty spaces before the first day of the month
     for (let i = 0; i < firstDay; i++) {
       const emptyCell = document.createElement("div");
       emptyCell.classList.add("empty");
       calendar.appendChild(emptyCell);
     }
 
-    // Build each day
     for (let day = 1; day <= lastDate; day++) {
       const dayCell = document.createElement("div");
       dayCell.classList.add("day");
@@ -37,7 +68,6 @@ document.addEventListener("DOMContentLoaded", () => {
       dayNumber.textContent = day;
       dayCell.appendChild(dayNumber);
 
-      // Highlight today's date
       const today = new Date();
 
       if (
@@ -48,9 +78,8 @@ document.addEventListener("DOMContentLoaded", () => {
         dayCell.classList.add("today");
       }
 
-      // Get saved appointment/note
-      const key = `${year}-${month}-${day}`;
-      const savedNote = localStorage.getItem(key);
+      const eventDate = isoDate(year, month, day);
+      const savedNote = events[eventDate];
 
       if (savedNote) {
         const noteText = document.createElement("div");
@@ -59,41 +88,65 @@ document.addEventListener("DOMContentLoaded", () => {
         dayCell.appendChild(noteText);
       }
 
-      // Click a date to add or edit an appointment
-      dayCell.addEventListener("click", () => {
-        const currentNote = localStorage.getItem(key) || "";
+      dayCell.addEventListener("click", async () => {
+        const currentNote = events[eventDate] || "";
 
         const note = prompt(
           "Enter event for this day:",
           currentNote
         );
 
-        if (note !== null) {
-          if (note.trim() === "") {
-            localStorage.removeItem(key);
-          } else {
-            localStorage.setItem(key, note.trim());
+        if (note === null) return;
+
+        if (note.trim() === "") {
+          const { error } = await supabaseClient
+            .from("calendar_events")
+            .delete()
+            .eq("event_date", eventDate);
+
+          if (error) {
+            alert("Could not delete event.");
+            return;
           }
 
-          buildCalendar();
+          delete events[eventDate];
+        } else {
+          const { error } = await supabaseClient
+            .from("calendar_events")
+            .upsert(
+              {
+                event_date: eventDate,
+                event_text: note.trim()
+              },
+              {
+                onConflict: "event_date"
+              }
+            );
+
+          if (error) {
+            alert("Could not save event.");
+            return;
+          }
+
+          events[eventDate] = note.trim();
         }
+
+        buildCalendar();
       });
 
       calendar.appendChild(dayCell);
     }
   }
 
-  // Previous month
   prevBtn.addEventListener("click", () => {
     currentDate.setMonth(currentDate.getMonth() - 1);
     buildCalendar();
   });
 
-  // Next month
   nextBtn.addEventListener("click", () => {
     currentDate.setMonth(currentDate.getMonth() + 1);
     buildCalendar();
   });
 
-  buildCalendar();
+  await loadEvents();
 });
